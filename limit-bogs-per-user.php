@@ -1,7 +1,6 @@
 <?php
 /*
 Plugin name:Limit Blogs per User
-Plugin Author:Brajesh Singh
 Plugin URI:http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu
 Author URI:http://buddydev.com/members/sbrajesh
 Version:1.4
@@ -60,6 +59,7 @@ class BPDevLimitBlogsPerUser{
         
 	$current_blog_count=self::get_blogs_count_for_user($current_user->ID);//find all blogs for the user of which the user is either editor/admin
 	$number_of_blogs_per_user=self::get_allowed_blogs_count();//find 
+		Plugin Author: Brajesh Singh, Tom Lynch
 	
 	//if number of allowed blog is greater than 0 and current user owns less number of blogs */
 	if(($number_of_blogs_per_user==0)||($current_blog_count<$number_of_blogs_per_user))

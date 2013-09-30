@@ -154,4 +154,4 @@ function display_options_form(){
 //initiate in
 BPDevLimitBlogsPerUser::get_instance();
 
-?>
+	BPDevLimitBlogsPerUser::get_instance();

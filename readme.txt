@@ -1,33 +1,28 @@
 === Limit Blogs Per User ===
-Contributors:sbrajesh
+Contributors:sbrajesh,unknowndomain
 Tags: buddypress,wpmu,multisite,wpms, options,limit blogs,user,limit
 Requires at least: 2.5+
 Tested up to: 3.2.1
-Stable tag: 1.4
+Stable tag: 1.5
 
-This plugin is for WordPress Multisite and/or WordPress Multisite+buddypress based social network.It limits the number of blogs a user can create.
+This plugin is for WordPress Multisite and/or WordPress Multisite+BuddyPress based social network. It limits the number of blogs a user can create.
+
 == Description ==
+This plugin is for WordPress Multisite and/or WordPress Multisite+BuddyPress based social network. It limits the number of blogs a user can create.
 
-This is a plugin for wpmu/wpmu+byddypress powered websites, where network administrators can limit the number of blogs a user can signup.
-It is pretty simple and adds an option to NetworkAdmin->Dashboard->network settings page, where you can limit the number of blogs. No additional frills required.
+It is pretty simple and adds an option to Network Admin > Dashboard > Network Settings page, where you can limit the number of blogs. No additional frills required.
 
 What It does
 
-It adds an option to the Network settings  page when you are logged in as site admin of the wpmu site(or wpmu+buddyppress site),Look at the bottom of options page,and You will see a text box like this asking for number of blogs allowed per user.If you set it to zero(which is the default),It will not restrict the blog registration then.
+It adds an option to the Network Settings page when you are logged in as Network Administrator of the WordPress Multisite. Look at the bottom of options page, and you will see a text box asking for number of blogs allowed per user. If you set it to zero which, is the default, it will not restrict the number of signups.
 
- == Installation ==
+== Installation ==
 
 1. Download the plugin Limit Blogs Per Users 
-2. Unzip the plugin and upload the file "limit-bogs-per-user.php"  to your wp-content/plugins  folder
-
-3 Please login to the Wordpress backend as Network Administrator(site owner)
-
-4.Go to NetworkAdmin-> Dashboard->Plugins->Installed page  and network activate "Limit Blogs Pre User".
-
-5.Go to Network Admin->Dashboard->network settings and  navigate to the bottom,you will see an option to enter the number of blogs allowed,per 
-user.Enter some limit and click update.
-
-5.You are done!. Now it's time to for action.Enjoy the life.
+2. Unzip the plugin and upload the file "limit-bogs-per-user.php"  to your wp-content/plugins folder
+3. Please login to the Wordpress backend as Network Administrator(site owner)
+4. Go to Network Admin > Dashboard > Plugins > Installed page and Network Activate "Limit Blogs Pre User".
+5. Go to Network Admin > Dashboard > Network Settings and navigate to the bottom, you will see an option to enter the number of blogs allowed, per user. Enter the limit and click update.
 
 == Frequently Asked Questions ==
 
@@ -35,14 +30,14 @@ Please leave a comment on my plugin page for support
 
 [here](http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu/) for any questions.
 
-
-
 == Screenshots ==
-Please visit 
-
-[http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu/](http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu/) 
+Please visit [http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu/](http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu/) 
 
 == Changelog ==
+= Version 1.5 =
+ * Fixes security issue
+ * Tidies up code
+ * Adds support for a pre-defined `LBPU_BLOG_LIMIT` in wp-config.php `define( 'LBPU_BLOG_LIMIT', 1 );`
 = Version 1.4 =
  *updated to work with wordpress 3.2.1 multisite and BuddyPress 1.5
  * rewritten code to use a singleton class

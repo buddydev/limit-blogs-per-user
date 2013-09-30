@@ -107,14 +107,17 @@ function save_allowed_blogs_count(){
 function is_user_blog_admin($user_id,$blog_id){
     global $wpdb;
        
-        $meta_key=$wpdb->prefix.$blog_id.'_capabilities';//.."_user_level";
-	$role_sql="SELECT user_id,meta_value FROM {$wpdb->usermeta} WHERE meta_key='". $meta_key."'";
 			if ( ! defined( 'LBPU_BLOG_LIMIT' ) ) {
 				add_action( 'wpmu_options', array( &$this, 'display_options_form' ) ); // show the form to allow how many number of blogs per user
 				add_action( 'update_wpmu_options', array( &$this, 'save_allowed_blogs_count' ) ); // action to save number of allowed blogs per user
 			}
 			if ( defined( 'LBPU_BLOG_LIMIT' ) )
 				return LBPU_BLOG_LIMIT;
+			$query = $wpdb->prepare( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = %s",
+				$wpdb->prefix . $blog_id . '_capabilities'
+			);
+			
+			$role = $wpdb->get_results( $query, ARRAY_A );
 	
         $role=$wpdb->get_results($wpdb->prepare($role_sql),ARRAY_A);
 	//clean the role

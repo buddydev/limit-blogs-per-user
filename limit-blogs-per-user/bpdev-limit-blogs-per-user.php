@@ -1,14 +1,5 @@
 <?php
-	/*
-		Plugin name: Limit Blogs per User
-		Plugin Author: Brajesh Singh, Tom Lynch
-		Plugin URI: http://buddydev.com/buddypress/limit-blogs-per-user-plugin-for-wpmu
-		Author URI: http://buddydev.com/members/sbrajesh
-		Version: 1.5
-		License: GPLv3
-		Network: true
-	*/
-	
+
 	class BPDevLimitBlogsPerUser {
 		private static $instance;
 		
@@ -25,6 +16,10 @@
 			
 			// since wp 3.0 handles number of allowed blog in idiotic ways, we need to filter on the site option which can be considered as a bad practice but wp 3.0 leaves no other option.
 			add_filter( 'site_option_registration', array( &$this, 'is_signup_allowed' ) );
+
+			// Add an easy to find 'Create a Blog' button
+			add_action( 'wp_before_admin_bar_render', array( &$this, 'admin_bar_create_a_blog') );
+			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_bar_create_a_blog_pointer'), 1000 );
 		}
 		/**
 		 * Factory method
@@ -105,7 +100,7 @@
 			$all_user = array_map( array( 'BPDevLimitBlogsPerUser', 'serialize_roles' ), $role ); // we are unserializing the role to make that as an array
 			
 			foreach( $all_user as $key => $user_info )
-				if( $user_info['meta_value']['administrator'] == 1 && $user_info['user_id'] == $user_id ) // if the role is admin
+				if( isset($user_info['meta_value']['administrator']) && $user_info['meta_value']['administrator'] == 1 && $user_info['user_id'] == $user_id ) // if the role is admin
 					return true;
 			return false;
 		}
@@ -133,6 +128,75 @@
 				</tbody>
 			</table>
 			<?php
+		}
+
+		/**
+		 * Add Create New Blog to admin_menu
+		 */
+		function admin_bar_create_a_blog() {
+			global $current_user, $wp_admin_bar, $current_site;
+
+			// if the user is not logged in or the user is network admin, do not apply any restriction settings
+			if( ! is_user_logged_in() || is_super_admin () )
+				return;
+			
+			$current_blog_count = self::get_blogs_count_for_user( $current_user->ID ); // find all blogs for the user of which the user is either editor/admin
+			$number_of_blogs_per_user = self::get_allowed_blogs_count(); // find 
+			
+			if ( ( $number_of_blogs_per_user == 0 ) || ( $current_blog_count < $number_of_blogs_per_user ) ) {
+				$wp_admin_bar->add_node( array(
+					'id'     => 'tiw-create-a-blog',
+					'title'  => __('Create a Blog', 'tiw'),
+					'href'   => site_url('/wp-signup.php'),
+					'parent' => 'top-secondary'
+				) );
+			}
+		}
+
+		function admin_bar_create_a_blog_pointer() {
+			if ( get_bloginfo('version') < '3.3' )
+				return;
+
+		 	wp_enqueue_style( 'wp-pointer' );
+		    wp_enqueue_script( 'tiw-pointer', plugins_url( 'js/limit-blogs-per-user-pointer.js', __FILE__ ), array( 'wp-pointer' ) );
+		 
+		    $pointers = array(
+				'pointers' => array(
+					'tiw-create-a-blog' => array(
+						'target' => '#wp-admin-bar-tiw-create-a-blog',
+					'options' => array(
+						'content' => sprintf( '<h3> %s </h3> <p> %s </p>',
+							__( 'Create a Blog' ,'tiw'),
+							__( 'You have not yet created a blog, click here to create one.','tiw')
+						),
+						'position' => array( 'edge' => 'top', 'align' => 'center' )
+					)
+				)
+			) );
+
+
+
+			wp_localize_script( 'tiw-pointer', 'tiw_pointer', self::pointers_remove_dismissed( $pointers ) );
+		}
+
+		/**
+		 * Utils
+		 */
+		function pointers_remove_dismissed( $pointers ) {
+			$valid_pointers = array('pointers' => array( ) );
+			$dismissed_pointers_string = (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true );
+			$dismissed_pointers = explode( ',', $dismissed_pointers_string );
+
+			if ( $dismissed_pointers_string == "" ) return $pointers;
+
+			foreach ( $pointers as $pointer_id => $pointer ) {
+				if ( in_array( $pointer_id, $dismissed_pointers ) || empty( $pointer )  || empty( $pointer_id ) || empty( $pointer['target'] ) || empty( $pointer['options'] ) )
+					continue;
+
+				$valid_pointers['pointers'][] = $pointer;
+			}
+
+			return $valid_pointers;
 		}
 	}
 	

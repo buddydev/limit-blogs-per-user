@@ -61,13 +61,15 @@
 		 */
 		function get_blogs_count_for_user( $user_id ) {
 			$blogs = get_blogs_of_user( $user_id ); // get all blogs of user
+
 			/**
 			 * Subscribers have user level 0, so that is not entered in the user meta, author:2, editor:7, Admin:10
 			 */
 			$count = 0;
 			foreach( $blogs as $blog ) {
-				if ( self::is_user_blog_admin( $user_id, $blog->userblog_id ) )
-				$count++;
+				if ( self::is_user_blog_admin( $user_id, $blog->userblog_id ) ) {
+					$count++;
+				}
 			}
 			return $count;
 		}
@@ -91,17 +93,21 @@
 			global $wpdb;
 			
 			$query = $wpdb->prepare( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = %s",
-				$wpdb->prefix . $blog_id . '_capabilities'
+				$wpdb->base_prefix . $blog_id . '_capabilities'
 			);
 			
 			$role = $wpdb->get_results( $query, ARRAY_A );
 			
 			// clean the role
-			$all_user = array_map( array( 'BPDevLimitBlogsPerUser', 'serialize_roles' ), $role ); // we are unserializing the role to make that as an array
-			
-			foreach( $all_user as $key => $user_info )
-				if( isset($user_info['meta_value']['administrator']) && $user_info['meta_value']['administrator'] == 1 && $user_info['user_id'] == $user_id ) // if the role is admin
+			$all_users = array_map( array( 'BPDevLimitBlogsPerUser', 'serialize_roles' ), $role ); // we are unserializing the role to make that as an array;
+
+
+			foreach( $all_users as $key => $user_info ) {
+				if( isset($user_info['meta_value']['administrator']) && $user_info['meta_value']['administrator'] == 1 && $user_info['user_id'] == $user_id ) {
+					// if the role is admin
 					return true;
+				}
+			}
 			return false;
 		}
 		
@@ -143,11 +149,11 @@
 			$current_blog_count = self::get_blogs_count_for_user( $current_user->ID ); // find all blogs for the user of which the user is either editor/admin
 			$number_of_blogs_per_user = self::get_allowed_blogs_count(); // find 
 			
-			if ( ( $number_of_blogs_per_user == 0 ) || ( $current_blog_count < $number_of_blogs_per_user ) ) {
+			if ( $number_of_blogs_per_user == 0 || ( $current_blog_count < $number_of_blogs_per_user ) ) {
 				$wp_admin_bar->add_node( array(
 					'id'     => 'tiw-create-a-blog',
 					'title'  => __('Create a Blog', 'tiw'),
-					'href'   => site_url('/wp-signup.php'),
+					'href'   => site_url( '/wp-signup.php' ),
 					'parent' => 'top-secondary'
 				) );
 			}

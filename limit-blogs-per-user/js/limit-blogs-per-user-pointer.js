@@ -1,5 +1,8 @@
 jQuery(document).ready(function($) {
 	pointer = tiw_pointer.pointers['tiw-create-a-blog'];
+
+	if (!pointer) return;
+	
 	options = $.extend( pointer.options, {
 		close: function() {
 			$.post( ajaxurl, {
